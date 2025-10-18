@@ -1,0 +1,148 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: bookstore-postgres
+    environment:
+      POSTGRES_USER: bookstore
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: bookstore
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookstore"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bookstore-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: bookstore-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bookstore-network
+
+  # Books Service
+  books-service:
+    build:
+      context: ./services/books-service
+      dockerfile: Dockerfile
+    container_name: books-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: bookstore
+      DB_PASSWORD: dev_password
+      DB_NAME: bookstore_books
+      DB_SSL_MODE: disable
+      REDIS_URL: redis:6379
+      PORT: 8081
+      GRPC_PORT: 9091
+      ENV: development
+    ports:
+      - "8081:8081"
+      - "9091:9091"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - bookstore-network
+    restart: unless-stopped
+
+  # Users Service
+  users-service:
+    build:
+      context: ./services/users-service
+      dockerfile: Dockerfile
+    container_name: users-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: bookstore
+      DB_PASSWORD: dev_password
+      DB_NAME: bookstore_users
+      DB_SSL_MODE: disable
+      JWT_SECRET: dev_jwt_secret_change_in_production_please
+      JWT_EXPIRATION_HOURS: 24
+      PORT: 8082
+      GRPC_PORT: 9092
+      ENV: development
+    ports:
+      - "8082:8082"
+      - "9092:9092"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bookstore-network
+    restart: unless-stopped
+
+  # Logging Service
+  logging-service:
+    build:
+      context: ./services/logging-service
+      dockerfile: Dockerfile
+    container_name: logging-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: bookstore
+      DB_PASSWORD: dev_password
+      DB_NAME: bookstore_logs
+      DB_SSL_MODE: disable
+      PORT: 8084
+      GRPC_PORT: 9094
+      ENV: development
+    ports:
+      - "8084:8084"
+      - "9094:9094"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bookstore-network
+    restart: unless-stopped
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend/customer-app
+      dockerfile: Dockerfile
+    container_name: bookstore-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - books-service
+      - users-service
+    networks:
+      - bookstore-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  bookstore-network:
+    driver: bridge
