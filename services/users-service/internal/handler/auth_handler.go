@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/youngermaster/bookstore/services/users-service/internal/service"
+	"github.com/youngermaster/my-distributed-bookstore/services/users-service/internal/service"
 )
 
 // AuthHandler handles HTTP requests for authentication

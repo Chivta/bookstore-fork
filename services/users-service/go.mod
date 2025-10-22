@@ -1,4 +1,4 @@
-module github.com/youngermaster/bookstore/services/users-service
+module github.com/youngermaster/my-distributed-bookstore/services/users-service
 
 go 1.21
 

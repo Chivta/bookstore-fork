@@ -6,12 +6,11 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
-	"github.com/youngermaster/bookstore/services/users-service/internal/domain"
-	"github.com/youngermaster/bookstore/services/users-service/internal/repository"
-	customJWT "github.com/youngermaster/bookstore/services/users-service/pkg/jwt"
+	"github.com/youngermaster/my-distributed-bookstore/services/users-service/internal/domain"
+	"github.com/youngermaster/my-distributed-bookstore/services/users-service/internal/repository"
+	customJWT "github.com/youngermaster/my-distributed-bookstore/services/users-service/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )

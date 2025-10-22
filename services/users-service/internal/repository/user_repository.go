@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/youngermaster/bookstore/services/users-service/internal/domain"
+	"github.com/youngermaster/my-distributed-bookstore/services/users-service/internal/domain"
 )
 
 // UserRepository defines the interface for user data access

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/youngermaster/bookstore/services/users-service/internal/domain"
+	"github.com/youngermaster/my-distributed-bookstore/services/users-service/internal/domain"
 	"gorm.io/gorm"
 )
 

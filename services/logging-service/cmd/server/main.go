@@ -15,7 +15,7 @@ import (
 	"github.com/youngermaster/bookstore/services/logging-service/internal/domain"
 	"github.com/youngermaster/bookstore/services/logging-service/internal/handler"
 	"github.com/youngermaster/bookstore/services/logging-service/internal/service"
-	"gorm.io/driver/postgresql"
+	postgresql "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )

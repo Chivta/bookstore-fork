@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/youngermaster/bookstore/services/users-service/internal/domain"
-	"github.com/youngermaster/bookstore/services/users-service/internal/repository"
+	"github.com/youngermaster/my-distributed-bookstore/services/users-service/internal/domain"
+	"github.com/youngermaster/my-distributed-bookstore/services/users-service/internal/repository"
 	"gorm.io/gorm"
 )
 
